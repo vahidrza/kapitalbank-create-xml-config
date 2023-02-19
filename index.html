@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/avicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+<style>
+    div{
+            margin: 5px;
+    }
+</style>
+    <title>Config</title>
+    <!--script src="js/FileSaver.js"></script-->
+</head>
+
+<body id="myBody" >
+    <h3 class="text-muted" >Created by Vahid I. Rzayev</h1>
+    <div class="row "   style="margin-top:20px;">
+        
+        <form id="myForm" action="">
+            <div class="col">
+                <label class="form-label" for="myInput">Merchant ID</label>
+                <input class="form-control" name="myInput" id="myInput" type="text"/>
+            </div>
+            <div class="col">
+                <label class="form-label" for="myInput2">Merchant Name</label>
+                <input class="form-control" name="myInput2" id="myInput2" type="text"/>
+            </div>
+            <div class="col">
+                <label class="form-label" for="myInput3">MCC Code</label>
+                <input class="form-control" name="myInput3" id="myInput3" type="number"/>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-outline-primary" id="myButton" >Default</button>
+                <button type="button" class="btn btn-outline-danger" id="myButton2" >WithCardSave</button>
+                <button type="button" class="btn btn-outline-danger" id="myButton3" >WithP2P</button>
+                <button type="button" class="btn btn-outline-danger" id="myButton4" >WithCardSave&P2P</button>
+                <button type="button" class="btn btn-success" id="myButton5" >Export&Copy</button>
+            </div>
+            </form>
+            
+        </form>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+    <!-- <script src="js.js"></script> -->
+    <script>
+        let myInput = document.getElementById("myInput");
+let myInput2 = document.getElementById("myInput2");
+let myInput3 = document.getElementById("myInput3");
+let myButton = document.getElementById("myButton");
+let myButton2 = document.getElementById("myButton2");
+let myButton3 = document.getElementById("myButton3");
+let myButton4 = document.getElementById("myButton4");
+let myButton5 = document.getElementById("myButton5");
+const myForm = document.querySelector("#myForm");
+const myBody = document.querySelector("#myBody");
+let myOutput = "";
+
+myaddEventListeners();
+
+function myaddEventListeners() {
+    myForm.addEventListener("click", getValues);
+}
+
+function getValues(e) {
+    let myInputValue = myInput.value.trim();
+    let myInput2Value = myInput2.value;
+    let myInput3Value = myInput3.value.trim();
+
+    checkMyDestination(e);
+
+    function checkMyDestination(e) {
+
+        if (e.target.id === 'myButton' || e.target.id === 'myButton2' || e.target.id === 'myButton3' || e.target.id === 'myButton4') {
+            checkMyValue(e);
+
+            function checkMyValue() {
+                if (myInputValue !== "" && myInput2Value !== "" && myInput3Value !== "") {
+                    giveMyValue(e);
+                    myReportFunction("text-success", `${myInputValue}`,3000000);
+                    myReportFunction("text-success", "Done!",3000);
+                } else {
+                    myReportFunction("text-danger", "Nəyisə boş qoymusan...",3000);
+                }
+            }
+        }
+
+        function giveMyValue() {
+            if (e.target.id === 'myButton') {
+                myOutput += `   
+    <Merchant MerchantID="${myInputValue}" Name="${myInput2Value}" XmlOutToNotBase64="true" acqBIN="" profileId="3DS_KAPS" >
+            <AcquirerMerchantID>${myInputValue}</AcquirerMerchantID>
+            <MCC>${myInput3Value}</MCC>
+            <MerchantName>${myInput2Value}</MerchantName>
+            <Connections>
+                    <POS FrameType="1" TerminalID="${myInputValue}" host="172.20.1.44" port="7002"/>
+            </Connections>
+    </Merchant>
+            `;
+            } 
+        else if (e.target.id === 'myButton2') {
+                myOutput += `   
+    <Merchant MerchantID="${myInputValue}" Name="${myInput2Value}" XmlOutToNotBase64="true" acqBIN="" profileId="3DS_KAPS" >
+            <Operations>
+                    <CardRegistration>true</CardRegistration>
+            </Operations>
+            <AcquirerMerchantID>${myInputValue}</AcquirerMerchantID>
+            <MCC>${myInput3Value}</MCC>
+            <MerchantName>${myInput2Value}</MerchantName>
+            <CardRegistrationProtocol>TPTP</CardRegistrationProtocol>
+            <AttachCardToRetailer>true</AttachCardToRetailer>
+            <CardRegistration>
+                    <RegisterCardOnSuccess>true</RegisterCardOnSuccess>
+                    <SaveCardUIDToOrder>true</SaveCardUIDToOrder>
+                    <CheckRegisterCardOn>true</CheckRegisterCardOn>
+            </CardRegistration>
+            <Connections>
+                    <POS FrameType="1" TerminalID="${myInputValue}" host="172.20.1.44" port="7002"/>
+            </Connections>
+    </Merchant>
+            `;
+            }
+        else if (e.target.id === 'myButton3') {
+                myOutput += `   
+    <Merchant MerchantID="${myInputValue}" Name="${myInput2Value}" XmlOutToNotBase64="true" acqBIN="" profileId="3DS_KAPS" >
+            <Operations>
+                    <P2PCardTransfer>true</P2PCardTransfer>
+                    <P2PTransfer>true</P2PTransfer>
+                    <P2PCredit>true</P2PCredit>
+                    <P2PDebit>true</P2PDebit>
+            </Operations>
+            <AcquirerMerchantID>${myInputValue}</AcquirerMerchantID>
+            <MCC>${myInput3Value}</MCC>
+            <MerchantName>${myInput2Value}</MerchantName>
+            <Connections>
+                    <POS FrameType="1" TerminalID="${myInputValue}" host="172.20.1.44" port="7002"/>
+            </Connections>
+    </Merchant>
+            `;
+            }
+        else if (e.target.id === 'myButton4') {
+                myOutput += `   
+    <Merchant MerchantID="${myInputValue}" Name="${myInput2Value}" XmlOutToNotBase64="true" acqBIN="" profileId="3DS_KAPS" >
+            <Operations>
+                    <CardRegistration>true</CardRegistration>
+                    <P2PCardTransfer>true</P2PCardTransfer>
+                    <P2PTransfer>true</P2PTransfer>
+                    <P2PCredit>true</P2PCredit>
+                    <P2PDebit>true</P2PDebit>
+            </Operations>
+            <AcquirerMerchantID>${myInputValue}</AcquirerMerchantID>
+            <MCC>${myInput3Value}</MCC>
+            <MerchantName>${myInput2Value}</MerchantName>
+            <CardRegistrationProtocol>TPTP</CardRegistrationProtocol>
+            <AttachCardToRetailer>true</AttachCardToRetailer>
+            <CardRegistration>
+                    <RegisterCardOnSuccess>true</RegisterCardOnSuccess>
+                    <SaveCardUIDToOrder>true</SaveCardUIDToOrder>
+                    <CheckRegisterCardOn>true</CheckRegisterCardOn>
+            </CardRegistration>
+            <Connections>
+                    <POS FrameType="1" TerminalID="${myInputValue}" host="172.20.1.44" port="7002"/>
+            </Connections>
+    </Merchant>
+            `;
+            }
+            
+            myInput.value="";
+            myInput2.value="";
+            myInput3.value="";
+        }
+        if (e.target.id === 'myButton5') {
+            console.log(myOutput);
+            navigator.clipboard.writeText(myOutput);
+            myReportFunction("text-success", "Successfully Exported to Console & Copied to Clipboard!",30000);
+            myOutput="";
+        }
+    }
+    e.preventDefault();
+    myInputValue="";
+    myInput2Value="";
+    myInput3Value="";
+}
+
+function myReportFunction(type,text,time) {
+    let myReport = document.createElement("h1");
+    myReport.className = type;
+    myReport.appendChild(document.createTextNode(text));
+    myBody.appendChild(myReport);
+    
+    setTimeout(() => {
+        myReport.remove();
+    }, time);
+}
+    </script>
+</body>
+
+</html>
